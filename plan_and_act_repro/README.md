@@ -48,6 +48,11 @@ plan-act-run demo-tools \
   --expression "(42 * 13) / 7 + sqrt(81)"
 ```
 
+6. Execute notebook end-to-end test:
+```bash
+./scripts/test_notebook.sh
+```
+
 ## Project Layout
 
 - `configs/`: model/data/eval/prompt configs

@@ -42,5 +42,7 @@ Use this page as the navigation hub when browsing on GitHub.
 [`scripts/`](scripts/)
 - No-key real tools demo script:
 [`scripts/run_real_tools_demo.sh`](scripts/run_real_tools_demo.sh)
+- Notebook execution test script:
+[`scripts/test_notebook.sh`](scripts/test_notebook.sh)
 - Tests:
 [`tests/`](tests/)
