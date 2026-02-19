@@ -19,6 +19,7 @@ from plan_and_act.environments.factory import build_environment
 from plan_and_act.eval.metrics import compute_episode_metrics
 from plan_and_act.graph.workflow import build_workflow
 from plan_and_act.prompts.templates import PromptTemplates
+from plan_and_act.tracing import TraceCollector, TraceConfig
 from plan_and_act.tools.factory import build_default_tool_registry
 from plan_and_act.utils.io import load_yaml, write_json
 from plan_and_act.utils.seeding import set_seed
@@ -44,11 +45,17 @@ def _load_model_configs(path: str) -> dict[str, ModelConfig]:
     }
 
 
+def _load_trace_config(path: str) -> TraceConfig:
+    return TraceConfig.model_validate(load_yaml(path))
+
+
 @app.command("run-episode")
 def run_episode(
     goal: str = typer.Option(..., help="User goal/instruction."),
     base_config: str = typer.Option("configs/base.yaml", help="Path to base runtime config."),
     model_config: str = typer.Option("configs/models.yaml", help="Path to model config."),
+    trace_config: str = typer.Option("configs/tracing.yaml", help="Path to tracing config."),
+    trace: bool = typer.Option(False, help="Enable runtime trace logging for this run."),
     environment: str = typer.Option("simulator", help="Environment adapter: simulator|tool"),
     dynamic_replanning: bool = typer.Option(True, help="Enable replanning after each action."),
     use_cot: bool = typer.Option(False, help="Enable CoT hints in prompts."),
@@ -56,6 +63,9 @@ def run_episode(
     load_dotenv()
     runtime_cfg = _load_runtime_config(base_config)
     model_cfgs = _load_model_configs(model_config)
+    trace_cfg = _load_trace_config(trace_config)
+    if trace:
+        trace_cfg.enabled = True
 
     runtime_cfg = runtime_cfg.model_copy(
         update={
@@ -71,8 +81,21 @@ def run_episode(
     executor = ExecutorAgent(model_cfgs["executor"], prompts)
     replanner = ReplannerAgent(model_cfgs["replanner"], prompts)
     env_adapter = build_environment(environment)
+    run_id = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
 
-    workflow = build_workflow(planner, executor, replanner, env_adapter)
+    tracer = TraceCollector(config=trace_cfg, run_id=run_id)
+    tracer.start_session(
+        goal=goal,
+        environment={"kind": environment, "name": env_adapter.name},
+        model_stack={
+            "planner": model_cfgs["planner"].model_dump(),
+            "executor": model_cfgs["executor"].model_dump(),
+            "replanner": model_cfgs["replanner"].model_dump(),
+        },
+        runtime_config=runtime_cfg.model_dump(),
+    )
+
+    workflow = build_workflow(planner, executor, replanner, env_adapter, tracer)
 
     initial_state = build_initial_state(
         goal=goal,
@@ -82,10 +105,39 @@ def run_episode(
         observation=env_adapter.reset(goal=goal),
     )
 
-    final_state: dict[str, Any] = workflow.invoke(initial_state)
-    metrics = compute_episode_metrics(final_state)
+    try:
+        final_state: dict[str, Any] = workflow.invoke(initial_state)
+    except Exception as exc:
+        tracer.log_event(
+            event_type="episode_error",
+            step=initial_state["step_count"],
+            payload={"error_type": type(exc).__name__, "error_message": str(exc)},
+        )
+        tracer.close(
+            status="failed",
+            summary={"error_type": type(exc).__name__, "error_message": str(exc)},
+        )
+        raise
 
-    run_id = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    metrics = compute_episode_metrics(final_state)
+    tracer.log_event(
+        event_type="episode_end",
+        step=int(final_state.get("step_count", 0)),
+        payload={
+            "success": bool(final_state.get("success", False)),
+            "final_answer": str(final_state.get("final_answer", "")),
+            "metrics": metrics,
+        },
+    )
+    tracer.close(
+        status="completed",
+        summary={
+            "success": bool(final_state.get("success", False)),
+            "step_count": int(final_state.get("step_count", 0)),
+            "metrics": metrics,
+        },
+    )
+
     artifact = EpisodeArtifact(
         run_id=run_id,
         goal=goal,
@@ -122,6 +174,8 @@ def run_episode(
         "final_answer": artifact.final_answer,
         "metrics": metrics,
         "environment": env_adapter.name,
+        "trace_enabled": trace_cfg.enabled,
+        "trace_run_id": run_id if trace_cfg.enabled else "",
         "used_openai_key": bool(os.getenv("OPENAI_API_KEY", "").strip()),
     })
 

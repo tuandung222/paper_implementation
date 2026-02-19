@@ -16,6 +16,7 @@ artifacts/reports/*.executed.ipynb
 # Data cache
 *.sqlite
 *.db
+data/raw/traces/
 
 # Jupyter
 .ipynb_checkpoints/

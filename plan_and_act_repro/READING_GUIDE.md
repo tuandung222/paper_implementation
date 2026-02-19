@@ -44,6 +44,8 @@ Use this page as the navigation hub when browsing on GitHub.
 [`scripts/`](scripts/)
 - No-key real tools demo script:
 [`scripts/run_real_tools_demo.sh`](scripts/run_real_tools_demo.sh)
+- Traced episode script:
+[`scripts/run_episode_with_trace.sh`](scripts/run_episode_with_trace.sh)
 - Notebook execution test script:
 [`scripts/test_notebook.sh`](scripts/test_notebook.sh)
 - Tests:

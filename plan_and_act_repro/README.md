@@ -54,6 +54,11 @@ plan-act-run demo-tools \
 ./scripts/test_notebook.sh
 ```
 
+7. Run one traced episode (writes `session.json` and `events.jsonl`):
+```bash
+./scripts/run_episode_with_trace.sh
+```
+
 ## Project Layout
 
 - `configs/`: model/data/eval/prompt configs
