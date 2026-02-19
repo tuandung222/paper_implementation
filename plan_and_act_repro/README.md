@@ -4,6 +4,7 @@ Navigation:
 - Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
 - Reproduction roadmap: [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
 - Paper deep-dive review: [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
+- Framework architecture guide: [`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
 - Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
 - Repository root: [`../README.md`](../README.md)
 
@@ -39,6 +40,14 @@ plan-act-run run-episode --goal "Follow the top contributor of this GitHub proje
 plan-act-run run-episode --goal "Find top contributor of openai/openai-python" --environment tool --dynamic-replanning
 ```
 
+5. Run real tools demo (no model API key required):
+```bash
+plan-act-run demo-tools \
+  --query "plan and act llm agents" \
+  --url "https://arxiv.org/abs/2503.09572v3" \
+  --expression "(42 * 13) / 7 + sqrt(81)"
+```
+
 ## Project Layout
 
 - `configs/`: model/data/eval/prompt configs
@@ -53,4 +62,5 @@ plan-act-run run-episode --goal "Find top contributor of openai/openai-python" -
 ## Notes
 
 - This scaffold starts with a deterministic environment simulator to validate workflow wiring.
-- Replace simulator adapters with WebArena harness in later phases.
+- Includes no-key real tools: web search, URL fetch, calculator.
+- Replace/add domain adapters (browser/API/desktop/data pipelines) as needed.

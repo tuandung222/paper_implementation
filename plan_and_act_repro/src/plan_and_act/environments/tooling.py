@@ -12,9 +12,16 @@ class ToolCallingEnvironment(EnvironmentAdapter):
 
     name = "tool_calling"
 
-    def __init__(self, registry: ToolRegistry, *, default_tool: str | None = None) -> None:
+    def __init__(
+        self,
+        registry: ToolRegistry,
+        *,
+        default_tool: str | None = None,
+        action_type_tool_map: dict[str, str] | None = None,
+    ) -> None:
         self.registry = registry
         self.default_tool = default_tool
+        self.action_type_tool_map = action_type_tool_map or {}
 
     def reset(self, *, goal: str) -> str:
         registered = sorted(self.registry.tools.keys())
@@ -23,6 +30,9 @@ class ToolCallingEnvironment(EnvironmentAdapter):
     def _resolve_tool_name(self, action: ExecutorAction) -> str | None:
         if action.target.startswith("tool:"):
             return action.target.split(":", 1)[1].strip() or None
+        mapped = self.action_type_tool_map.get(action.action_type)
+        if mapped:
+            return mapped
         return self.default_tool
 
     def step(self, *, action: ExecutorAction, step_count: int) -> EnvironmentStepResult:

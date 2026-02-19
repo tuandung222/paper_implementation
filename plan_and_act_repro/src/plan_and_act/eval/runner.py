@@ -19,6 +19,7 @@ from plan_and_act.environments.factory import build_environment
 from plan_and_act.eval.metrics import compute_episode_metrics
 from plan_and_act.graph.workflow import build_workflow
 from plan_and_act.prompts.templates import PromptTemplates
+from plan_and_act.tools.factory import build_default_tool_registry
 from plan_and_act.utils.io import load_yaml, write_json
 from plan_and_act.utils.seeding import set_seed
 
@@ -123,6 +124,60 @@ def run_episode(
         "environment": env_adapter.name,
         "used_openai_key": bool(os.getenv("OPENAI_API_KEY", "").strip()),
     })
+
+
+@app.command("demo-tools")
+def demo_tools(
+    query: str = typer.Option(
+        "latest langgraph release notes",
+        help="Web search query for the no-key web_search tool.",
+    ),
+    url: str = typer.Option(
+        "https://docs.python.org/3/library/ast.html",
+        help="URL for the no-key fetch_url tool.",
+    ),
+    expression: str = typer.Option(
+        "sqrt(144) + 2**8 - 3",
+        help="Expression for the no-key calculator tool.",
+    ),
+) -> None:
+    registry = build_default_tool_registry()
+
+    search_result = registry.call(
+        "web_search",
+        {
+            "query": query,
+            "max_results": 5,
+        },
+    )
+    fetch_result = registry.call(
+        "fetch_url",
+        {
+            "url": url,
+            "max_chars": 500,
+        },
+    )
+    calc_result = registry.call(
+        "calculator",
+        {
+            "expression": expression,
+        },
+    )
+
+    print("[bold green]Real tool demo finished (no model API key required)[/bold green]")
+    print(
+        {
+            "search": search_result,
+            "fetch": {
+                "ok": fetch_result.get("ok"),
+                "url": fetch_result.get("url"),
+                "status": fetch_result.get("status"),
+                "title": fetch_result.get("title"),
+                "content_preview": fetch_result.get("content_preview"),
+            },
+            "calculator": calc_result,
+        }
+    )
 
 
 def run_cli() -> None:

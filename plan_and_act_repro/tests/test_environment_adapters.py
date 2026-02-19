@@ -61,3 +61,18 @@ def test_tool_environment_exit_action_finishes_episode() -> None:
     assert result.done is True
     assert result.success is True
     assert result.final_answer == "done"
+
+
+def test_tool_environment_maps_search_action_to_web_search_tool() -> None:
+    env = build_environment("tool")
+    env.reset(goal="Search something")
+    result = env.step(
+        action=ExecutorAction(
+            action_type="search",
+            target="",
+            arguments={"query": "plan and act llm agents", "max_results": 1},
+        ),
+        step_count=1,
+    )
+
+    assert "Tool[web_search]" in result.observation

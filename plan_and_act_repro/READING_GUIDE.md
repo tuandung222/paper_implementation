@@ -10,7 +10,9 @@ Use this page as the navigation hub when browsing on GitHub.
 [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
 3. Technical deep-dive review of the paper:
 [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
-4. Interactive module inspection + real tool demo:
+4. Framework architecture details and implementation rationale:
+[`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
+5. Interactive module inspection + real tool demo:
 [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
 
 ## Source Materials
@@ -32,9 +34,13 @@ Use this page as the navigation hub when browsing on GitHub.
 [`src/plan_and_act/environments/`](src/plan_and_act/environments/)
 - Tool implementations:
 [`src/plan_and_act/tools/`](src/plan_and_act/tools/)
+- No-key tools architecture:
+[`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md#5-real-tools-without-model-api-key)
 - CLI runner:
 [`src/plan_and_act/eval/runner.py`](src/plan_and_act/eval/runner.py)
 - Scripts:
 [`scripts/`](scripts/)
+- No-key real tools demo script:
+[`scripts/run_real_tools_demo.sh`](scripts/run_real_tools_demo.sh)
 - Tests:
 [`tests/`](tests/)

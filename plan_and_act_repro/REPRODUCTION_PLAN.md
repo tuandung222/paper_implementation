@@ -37,6 +37,9 @@ Lý do chọn:
 3. Dễ mở rộng từ baseline sang dynamic replanning mà không phá kiến trúc.
 4. Dễ đọc cho researcher (flow rõ ràng theo graph/state machine).
 
+Note:
+- Dù benchmark chính vẫn bám paper (WebArena/WebVoyager), framework implementation được thiết kế theo hướng **domain-agnostic** để tái sử dụng cho API/tool/data-workflow agents.
+
 ## 2) Stack kỹ thuật đề xuất
 
 1. **Model API**
