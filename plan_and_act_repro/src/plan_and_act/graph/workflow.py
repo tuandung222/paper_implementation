@@ -27,7 +27,7 @@ def planner_node(
             payload={
                 "goal": state["goal"],
                 "observation": state["observation"],
-                "action_history_length": len(state["action_history"]),
+                "action_history": state["action_history"],
             },
         )
     output = planner.plan(
@@ -35,6 +35,7 @@ def planner_node(
         observation=state["observation"],
         action_history=state["action_history"],
         use_cot=state["use_cot"],
+        step=state["step_count"],
     )
     if tracer:
         tracer.log_event(
@@ -120,6 +121,7 @@ def executor_node(
         step_index=current_idx,
         total_steps=len(plan),
         use_cot=state["use_cot"],
+        step=step_count,
     )
 
     new_step_count = step_count + 1
@@ -177,7 +179,8 @@ def replanner_node(
             step=state["step_count"],
             payload={
                 "previous_plan_length": len(state["plan"]),
-                "action_history_length": len(state["action_history"]),
+                "previous_plan": state["plan"],
+                "action_history": state["action_history"],
                 "observation": state["observation"],
             },
         )
@@ -187,6 +190,7 @@ def replanner_node(
         action_history=state["action_history"],
         observation=state["observation"],
         use_cot=state["use_cot"],
+        step=state["step_count"],
     )
     if tracer:
         tracer.log_event(

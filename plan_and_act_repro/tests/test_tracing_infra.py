@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from plan_and_act.tracing import TraceCollector, TraceConfig
+from plan_and_act.tracing.schemas import TRACE_EVENT_VERSION, TRACE_SCHEMA_VERSION, TraceEvent, TraceSession
 
 
 def test_trace_collector_writes_session_and_events(tmp_path: Path) -> None:
@@ -39,9 +40,31 @@ def test_trace_collector_writes_session_and_events(tmp_path: Path) -> None:
     session = json.loads(session_path.read_text(encoding="utf-8"))
     assert session["status"] == "completed"
     assert session["goal"] == "trace-goal"
+    assert session["schema_version"] == TRACE_SCHEMA_VERSION
     assert session["summary"]["event_count"] == 2
 
     events = [json.loads(line) for line in events_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     assert len(events) == 2
+    assert events[0]["schema_version"] == TRACE_SCHEMA_VERSION
+    assert events[0]["event_version"] == TRACE_EVENT_VERSION
     assert events[0]["event_type"] == "planner_input"
     assert events[1]["event_type"] == "planner_output"
+
+
+def test_trace_schema_backward_compatible_defaults() -> None:
+    old_session = {
+        "run_id": "legacy",
+        "goal": "legacy goal",
+    }
+    parsed_session = TraceSession.model_validate(old_session)
+    assert parsed_session.schema_version == TRACE_SCHEMA_VERSION
+
+    old_event = {
+        "run_id": "legacy",
+        "step": 0,
+        "event_type": "planner_input",
+        "payload": {"goal": "legacy goal"},
+    }
+    parsed_event = TraceEvent.model_validate(old_event)
+    assert parsed_event.schema_version == TRACE_SCHEMA_VERSION
+    assert parsed_event.event_version == TRACE_EVENT_VERSION

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+from pathlib import Path
 
 from plan_and_act.core.schemas import ExecutorAction
 from plan_and_act.environments.factory import build_environment
 from plan_and_act.environments.tooling import ToolCallingEnvironment
 from plan_and_act.tools.base import ToolRegistry
+from plan_and_act.tracing import TraceCollector, TraceConfig
 
 
 @dataclass
@@ -76,3 +79,39 @@ def test_tool_environment_maps_search_action_to_web_search_tool() -> None:
     )
 
     assert "Tool[web_search]" in result.observation
+
+
+def test_tool_environment_emits_structured_tool_call_events(tmp_path: Path) -> None:
+    tracer = TraceCollector(
+        config=TraceConfig(enabled=True, base_dir=str(tmp_path)),
+        run_id="tool_trace",
+    )
+    tracer.start_session(
+        goal="trace tools",
+        environment={"kind": "tool", "name": "tool_calling"},
+        model_stack={},
+        runtime_config={},
+    )
+    env = ToolCallingEnvironment(
+        ToolRegistry({"echo": EchoTool()}),
+        default_tool="echo",
+        tracer=tracer,
+    )
+
+    env.reset(goal="emit tool events")
+    _ = env.step(
+        action=ExecutorAction(
+            action_type="search",
+            target="",
+            arguments={"query": "hello"},
+        ),
+        step_count=1,
+    )
+    tracer.close(status="completed", summary={})
+
+    events_path = tmp_path / "tool_trace" / "events.jsonl"
+    events = [json.loads(line) for line in events_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    event_types = [event["event_type"] for event in events]
+
+    assert "tool_call_start" in event_types
+    assert "tool_call_end" in event_types

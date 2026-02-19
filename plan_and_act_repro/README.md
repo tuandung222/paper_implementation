@@ -1,12 +1,19 @@
 # Plan-and-Act Reproduction (arXiv:2503.09572v3)
 
 Navigation:
+- Full docs index: [`DOCS_INDEX.md`](DOCS_INDEX.md)
 - Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
 - Reproduction roadmap: [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
 - Training-data tracing plan: [`TRAINING_DATA_TRACING_PLAN.md`](TRAINING_DATA_TRACING_PLAN.md)
+- Tracing review mindset: [`TRACE_DATA_REVIEW_MINDSET.md`](TRACE_DATA_REVIEW_MINDSET.md)
+- Tracing review checklist: [`TRACE_DATA_REVIEW_CHECKLIST.md`](TRACE_DATA_REVIEW_CHECKLIST.md)
+- Trace-to-SFT walkthrough: [`TRACE_TO_SFT_CODE_REVIEW_WALKTHROUGH.md`](TRACE_TO_SFT_CODE_REVIEW_WALKTHROUGH.md)
 - Paper deep-dive review: [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
 - Framework architecture guide: [`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
+- Visual architecture guide: [`AGENT_ARCHITECTURE_VISUAL_GUIDE.md`](AGENT_ARCHITECTURE_VISUAL_GUIDE.md)
+- Planning/orchestration deep dive: [`PLANNING_ORCHESTRATION_DEEP_DIVE.md`](PLANNING_ORCHESTRATION_DEEP_DIVE.md)
 - Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
+- Notebook full trace demo: [`notebooks/02_complex_query_full_trace_gpt4.ipynb`](notebooks/02_complex_query_full_trace_gpt4.ipynb)
 - Repository root: [`../README.md`](../README.md)
 
 Research-friendly codebase to reproduce the main ideas in **Plan-and-Act**:

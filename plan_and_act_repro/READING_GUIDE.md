@@ -10,11 +10,19 @@ Use this page as the navigation hub when browsing on GitHub.
 [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
 3. Training-data tracing implementation plan:
 [`TRAINING_DATA_TRACING_PLAN.md`](TRAINING_DATA_TRACING_PLAN.md)
-4. Technical deep-dive review of the paper:
+4. Tracing review mindset (LLM Scientist perspective):
+[`TRACE_DATA_REVIEW_MINDSET.md`](TRACE_DATA_REVIEW_MINDSET.md)
+5. Tracing review checklist:
+[`TRACE_DATA_REVIEW_CHECKLIST.md`](TRACE_DATA_REVIEW_CHECKLIST.md)
+6. Trace-to-SFT practical walkthrough:
+[`TRACE_TO_SFT_CODE_REVIEW_WALKTHROUGH.md`](TRACE_TO_SFT_CODE_REVIEW_WALKTHROUGH.md)
+7. Technical deep-dive review of the paper:
 [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
-5. Framework architecture details and implementation rationale:
+8. Framework architecture details and implementation rationale:
 [`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
-6. Interactive module inspection + real tool demo:
+9. Visual architecture and sequence diagrams:
+[`AGENT_ARCHITECTURE_VISUAL_GUIDE.md`](AGENT_ARCHITECTURE_VISUAL_GUIDE.md)
+10. Interactive module inspection + real tool demo:
 [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
 
 ## Source Materials

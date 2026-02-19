@@ -76,14 +76,14 @@ def run_episode(
 
     set_seed(runtime_cfg.seed)
 
-    prompts = PromptTemplates(config_dir="configs/prompts")
-    planner = PlannerAgent(model_cfgs["planner"], prompts)
-    executor = ExecutorAgent(model_cfgs["executor"], prompts)
-    replanner = ReplannerAgent(model_cfgs["replanner"], prompts)
-    env_adapter = build_environment(environment)
     run_id = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-
     tracer = TraceCollector(config=trace_cfg, run_id=run_id)
+    env_adapter = build_environment(environment, tracer=tracer)
+
+    prompts = PromptTemplates(config_dir="configs/prompts")
+    planner = PlannerAgent(model_cfgs["planner"], prompts, tracer=tracer)
+    executor = ExecutorAgent(model_cfgs["executor"], prompts, tracer=tracer)
+    replanner = ReplannerAgent(model_cfgs["replanner"], prompts, tracer=tracer)
     tracer.start_session(
         goal=goal,
         environment={"kind": environment, "name": env_adapter.name},

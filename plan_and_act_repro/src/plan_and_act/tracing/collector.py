@@ -35,6 +35,7 @@ class TraceCollector:
             return
 
         self.session = TraceSession(
+            schema_version=self.config.schema_version,
             run_id=self.run_id,
             goal=goal,
             environment=environment,
@@ -56,6 +57,7 @@ class TraceCollector:
             return
 
         event = TraceEvent(
+            schema_version=self.config.schema_version,
             run_id=self.run_id,
             step=step,
             event_type=event_type,

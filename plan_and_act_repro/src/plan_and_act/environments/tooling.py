@@ -5,6 +5,7 @@ import json
 from plan_and_act.core.schemas import ExecutorAction
 from plan_and_act.environments.base import EnvironmentAdapter, EnvironmentStepResult
 from plan_and_act.tools.base import ToolRegistry
+from plan_and_act.tracing.collector import TraceCollector
 
 
 class ToolCallingEnvironment(EnvironmentAdapter):
@@ -18,10 +19,12 @@ class ToolCallingEnvironment(EnvironmentAdapter):
         *,
         default_tool: str | None = None,
         action_type_tool_map: dict[str, str] | None = None,
+        tracer: TraceCollector | None = None,
     ) -> None:
         self.registry = registry
         self.default_tool = default_tool
         self.action_type_tool_map = action_type_tool_map or {}
+        self.tracer = tracer
 
     def reset(self, *, goal: str) -> str:
         registered = sorted(self.registry.tools.keys())
@@ -46,6 +49,19 @@ class ToolCallingEnvironment(EnvironmentAdapter):
 
         tool_name = self._resolve_tool_name(action)
         if not tool_name:
+            if self.tracer:
+                self.tracer.log_event(
+                    event_type="tool_call_end",
+                    step=step_count,
+                    payload={
+                        "tool_name": "",
+                        "ok": False,
+                        "error": "no_tool_selected",
+                        "action_type": action.action_type,
+                        "target": action.target,
+                        "arguments": action.arguments,
+                    },
+                )
             return EnvironmentStepResult(
                 observation=(
                     f"Step {step_count}: No tool selected for action_type='{action.action_type}'. "
@@ -53,7 +69,28 @@ class ToolCallingEnvironment(EnvironmentAdapter):
                 ),
             )
 
+        if self.tracer:
+            self.tracer.log_event(
+                event_type="tool_call_start",
+                step=step_count,
+                payload={
+                    "tool_name": tool_name,
+                    "action_type": action.action_type,
+                    "target": action.target,
+                    "arguments": action.arguments,
+                },
+            )
         result = self.registry.call(tool_name, action.arguments)
+        if self.tracer:
+            self.tracer.log_event(
+                event_type="tool_call_end",
+                step=step_count,
+                payload={
+                    "tool_name": tool_name,
+                    "ok": bool(result.get("ok", False)),
+                    "result": result,
+                },
+            )
         observation = (
             f"Step {step_count}: Tool[{tool_name}] returned: {json.dumps(result, ensure_ascii=True)}"
         )
