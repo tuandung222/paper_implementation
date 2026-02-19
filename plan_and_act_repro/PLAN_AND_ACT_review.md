@@ -1,5 +1,11 @@
 # Plan-and-Act (arXiv:2503.09572v3) - Review & Technical Deep Dive
 
+Navigation:
+- Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
+- Reproduction roadmap: [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
+- Project README: [`README.md`](README.md)
+- Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
+
 ## Paper Info
 - Title: **Plan-and-Act: Improving Planning of Agents for Long-Horizon Tasks**
 - arXiv: [2503.09572v3](https://arxiv.org/abs/2503.09572v3)
@@ -203,7 +209,7 @@ Nếu xét theo hướng "triển khai agent trong môi trường thật", paper
 - WebArena-Lite train set referenced: **1,113** examples
 - WebArena-Lite test tasks: **165**
 
-## Notes for this local repo
+## Notes for this repo
 Review này được viết dựa trên:
-- `paper_assets/2503.09572v3.pdf`
-- `paper_assets/2503.09572v3.html`
+- [`paper_assets/2503.09572v3.pdf`](paper_assets/2503.09572v3.pdf)
+- [`paper_assets/2503.09572v3.html`](paper_assets/2503.09572v3.html)

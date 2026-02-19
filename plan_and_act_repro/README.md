@@ -1,5 +1,12 @@
 # Plan-and-Act Reproduction (arXiv:2503.09572v3)
 
+Navigation:
+- Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
+- Reproduction roadmap: [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
+- Paper deep-dive review: [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
+- Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
+- Repository root: [`../README.md`](../README.md)
+
 Research-friendly codebase to reproduce the main ideas in **Plan-and-Act**:
 - Planner-Executor modular architecture
 - Synthetic planning-data pipeline

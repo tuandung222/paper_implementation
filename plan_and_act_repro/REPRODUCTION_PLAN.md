@@ -1,5 +1,11 @@
 # Reproduction Plan - Plan-and-Act (arXiv:2503.09572v3)
 
+Navigation:
+- Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
+- Project README: [`README.md`](README.md)
+- Paper review: [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
+- Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
+
 ## 0) Mục tiêu tái hiện (reproduce target)
 
 Mục tiêu thực tế chia 3 mức để dễ kiểm soát kỳ vọng:
@@ -272,4 +278,3 @@ Bạn đã gửi API key trong chat. Khuyến nghị:
 Nếu mục tiêu là “linh hoạt, dễ hiện thực, dễ mở rộng, dễ đọc cho researcher”, thì:
 1. **LangGraph + schema-first design + config-driven experiments** là lựa chọn phù hợp nhất.
 2. Triển khai theo 5 phase ở trên sẽ vừa giữ chất lượng kỹ thuật, vừa bám sát đóng góp cốt lõi của paper.
-
