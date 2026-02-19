@@ -12,6 +12,7 @@ Research-friendly codebase to reproduce the main ideas in **Plan-and-Act**:
 - Synthetic planning-data pipeline
 - Dynamic replanning
 - CoT-enhanced planning/execution
+- Domain-agnostic environment adapters (not limited to browser/web)
 
 ## Quick Start
 
@@ -30,13 +31,20 @@ cp .env.example .env
 
 3. Run baseline episode:
 ```bash
-plan-act-run run-episode --goal "Follow the top contributor of this GitHub project" --dynamic-replanning
+plan-act-run run-episode --goal "Follow the top contributor of this GitHub project" --environment simulator --dynamic-replanning
+```
+
+4. Run tool-calling domain episode:
+```bash
+plan-act-run run-episode --goal "Find top contributor of openai/openai-python" --environment tool --dynamic-replanning
 ```
 
 ## Project Layout
 
 - `configs/`: model/data/eval/prompt configs
 - `src/plan_and_act/`: source code
+- `src/plan_and_act/environments/`: domain adapters (`simulator`, `tool`)
+- `src/plan_and_act/tools/`: reusable external tools (e.g., GitHub API)
 - `tests/`: unit tests for schema/graph transitions
 - `data/`: raw/interim/processed/synthetic datasets
 - `artifacts/`: run traces and reports

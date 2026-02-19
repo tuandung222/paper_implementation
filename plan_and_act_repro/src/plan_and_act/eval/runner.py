@@ -15,6 +15,7 @@ from plan_and_act.agents.replanner import ReplannerAgent
 from plan_and_act.core.schemas import EpisodeArtifact
 from plan_and_act.core.state import build_initial_state
 from plan_and_act.core.types import ModelConfig, RuntimeConfig
+from plan_and_act.environments.factory import build_environment
 from plan_and_act.eval.metrics import compute_episode_metrics
 from plan_and_act.graph.workflow import build_workflow
 from plan_and_act.prompts.templates import PromptTemplates
@@ -47,6 +48,7 @@ def run_episode(
     goal: str = typer.Option(..., help="User goal/instruction."),
     base_config: str = typer.Option("configs/base.yaml", help="Path to base runtime config."),
     model_config: str = typer.Option("configs/models.yaml", help="Path to model config."),
+    environment: str = typer.Option("simulator", help="Environment adapter: simulator|tool"),
     dynamic_replanning: bool = typer.Option(True, help="Enable replanning after each action."),
     use_cot: bool = typer.Option(False, help="Enable CoT hints in prompts."),
 ) -> None:
@@ -67,14 +69,16 @@ def run_episode(
     planner = PlannerAgent(model_cfgs["planner"], prompts)
     executor = ExecutorAgent(model_cfgs["executor"], prompts)
     replanner = ReplannerAgent(model_cfgs["replanner"], prompts)
+    env_adapter = build_environment(environment)
 
-    workflow = build_workflow(planner, executor, replanner)
+    workflow = build_workflow(planner, executor, replanner, env_adapter)
 
     initial_state = build_initial_state(
         goal=goal,
         max_steps=runtime_cfg.max_steps,
         dynamic_replanning=runtime_cfg.dynamic_replanning,
         use_cot=runtime_cfg.use_cot,
+        observation=env_adapter.reset(goal=goal),
     )
 
     final_state: dict[str, Any] = workflow.invoke(initial_state)
@@ -101,6 +105,10 @@ def run_episode(
                 "executor": model_cfgs["executor"].model_dump(),
                 "replanner": model_cfgs["replanner"].model_dump(),
             },
+            "environment": {
+                "name": env_adapter.name,
+                "kind": environment,
+            },
             "metrics": metrics,
             "final_state": final_state,
             "artifact": artifact.model_dump(),
@@ -112,6 +120,7 @@ def run_episode(
         "step_count": artifact.step_count,
         "final_answer": artifact.final_answer,
         "metrics": metrics,
+        "environment": env_adapter.name,
         "used_openai_key": bool(os.getenv("OPENAI_API_KEY", "").strip()),
     })
 

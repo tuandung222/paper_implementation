@@ -28,6 +28,10 @@ Use this page as the navigation hub when browsing on GitHub.
 [`src/plan_and_act/`](src/plan_and_act/)
 - Workflow graph:
 [`src/plan_and_act/graph/workflow.py`](src/plan_and_act/graph/workflow.py)
+- Environment adapters:
+[`src/plan_and_act/environments/`](src/plan_and_act/environments/)
+- Tool implementations:
+[`src/plan_and_act/tools/`](src/plan_and_act/tools/)
 - CLI runner:
 [`src/plan_and_act/eval/runner.py`](src/plan_and_act/eval/runner.py)
 - Scripts:

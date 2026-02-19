@@ -106,15 +106,3 @@ class ExecutorAgent:
             arguments={},
             rationale="Proceed with a relevant click action.",
         )
-
-
-def simulate_environment_observation(action: ExecutorAction, step_count: int) -> str:
-    if action.action_type == "search":
-        return f"Step {step_count}: Search results loaded for query '{action.arguments.get('query', '')}'."
-    if action.action_type == "click":
-        return f"Step {step_count}: Clicked element '{action.target}'. New page rendered."
-    if action.action_type == "type":
-        return f"Step {step_count}: Typed into '{action.target}'."
-    if action.action_type == "exit":
-        return f"Step {step_count}: Episode finished."
-    return f"Step {step_count}: Observation updated."

@@ -4,11 +4,13 @@ from typing import Any
 
 from langgraph.graph import END, START, StateGraph
 
-from plan_and_act.agents.executor import ExecutorAgent, simulate_environment_observation
+from plan_and_act.agents.executor import ExecutorAgent
 from plan_and_act.agents.planner import PlannerAgent
 from plan_and_act.agents.replanner import ReplannerAgent
 from plan_and_act.core.schemas import PlanStep
 from plan_and_act.core.state import PlanActState
+from plan_and_act.environments.base import EnvironmentAdapter
+from plan_and_act.environments.simulator import GenericSimulatorEnvironment
 from plan_and_act.graph.transitions import route_after_executor
 
 
@@ -26,7 +28,11 @@ def planner_node(state: PlanActState, planner: PlannerAgent) -> dict[str, Any]:
     }
 
 
-def executor_node(state: PlanActState, executor: ExecutorAgent) -> dict[str, Any]:
+def executor_node(
+    state: PlanActState,
+    executor: ExecutorAgent,
+    environment: EnvironmentAdapter,
+) -> dict[str, Any]:
     if state["done"]:
         return {}
 
@@ -44,6 +50,13 @@ def executor_node(state: PlanActState, executor: ExecutorAgent) -> dict[str, Any
         }
 
     if not plan or current_idx >= len(plan):
+        if not state["dynamic_replanning"]:
+            return {
+                "done": True,
+                "success": False,
+                "final_answer": "Stopped: plan exhausted while dynamic replanning is disabled.",
+                "notes": state["notes"] + ["Plan exhausted and replanning is disabled."],
+            }
         return {
             "needs_replan": True,
             "notes": state["notes"] + ["No remaining plan steps; requesting replanning."],
@@ -61,13 +74,15 @@ def executor_node(state: PlanActState, executor: ExecutorAgent) -> dict[str, Any
 
     new_step_count = step_count + 1
     new_action_history = state["action_history"] + [action.model_dump()]
-    new_observation = simulate_environment_observation(action, new_step_count)
+    env_result = environment.step(action=action, step_count=new_step_count)
+    new_observation = env_result.observation
 
-    done = bool(action.is_final)
-    success = bool(action.is_final)
-    final_answer = action.final_answer if done else state["final_answer"]
+    done = bool(action.is_final or env_result.done)
+    success = bool(action.is_final or env_result.success)
+    final_answer = action.final_answer or env_result.final_answer or state["final_answer"]
 
     needs_replan = bool(state["dynamic_replanning"] and not done)
+    notes = state["notes"] + env_result.notes
 
     return {
         "latest_action": action.model_dump(),
@@ -79,6 +94,7 @@ def executor_node(state: PlanActState, executor: ExecutorAgent) -> dict[str, Any
         "success": success,
         "final_answer": final_answer,
         "needs_replan": needs_replan,
+        "notes": notes,
     }
 
 
@@ -102,11 +118,13 @@ def build_workflow(
     planner: PlannerAgent,
     executor: ExecutorAgent,
     replanner: ReplannerAgent,
+    environment: EnvironmentAdapter | None = None,
 ):
+    environment_adapter = environment or GenericSimulatorEnvironment()
     graph = StateGraph(PlanActState)
 
     graph.add_node("planner", lambda s: planner_node(s, planner))
-    graph.add_node("executor", lambda s: executor_node(s, executor))
+    graph.add_node("executor", lambda s: executor_node(s, executor, environment_adapter))
     graph.add_node("replanner", lambda s: replanner_node(s, replanner))
 
     graph.add_edge(START, "planner")
