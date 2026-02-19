@@ -8,11 +8,13 @@ Use this page as the navigation hub when browsing on GitHub.
 [`README.md`](README.md)
 2. Reproduction roadmap and implementation phases:
 [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
-3. Technical deep-dive review of the paper:
+3. Training-data tracing implementation plan:
+[`TRAINING_DATA_TRACING_PLAN.md`](TRAINING_DATA_TRACING_PLAN.md)
+4. Technical deep-dive review of the paper:
 [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
-4. Framework architecture details and implementation rationale:
+5. Framework architecture details and implementation rationale:
 [`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
-5. Interactive module inspection + real tool demo:
+6. Interactive module inspection + real tool demo:
 [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
 
 ## Source Materials

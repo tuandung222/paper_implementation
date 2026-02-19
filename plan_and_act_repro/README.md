@@ -3,6 +3,7 @@
 Navigation:
 - Reading hub: [`READING_GUIDE.md`](READING_GUIDE.md)
 - Reproduction roadmap: [`REPRODUCTION_PLAN.md`](REPRODUCTION_PLAN.md)
+- Training-data tracing plan: [`TRAINING_DATA_TRACING_PLAN.md`](TRAINING_DATA_TRACING_PLAN.md)
 - Paper deep-dive review: [`PLAN_AND_ACT_review.md`](PLAN_AND_ACT_review.md)
 - Framework architecture guide: [`AGENT_FRAMEWORK_ARCHITECTURE.md`](AGENT_FRAMEWORK_ARCHITECTURE.md)
 - Notebook demo: [`notebooks/01_plan_and_act_real_tool_demo.ipynb`](notebooks/01_plan_and_act_real_tool_demo.ipynb)
