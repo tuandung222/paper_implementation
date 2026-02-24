@@ -281,6 +281,12 @@ pytest -q tests/test_tracing_infra.py
 pytest -q tests/test_tools_builtin.py
 ```
 
+Latest local verification:
+1. Date: `2026-02-24`
+2. Environment: `conda env vllm` (`Python 3.12.9`, `pydantic 2.12.5`)
+3. Command: `conda run -n vllm pytest -q`
+4. Result: `46 passed in 8.81s`
+
 ## 11) Known Limitations
 
 1. Planner is structured-output and multi-step, but explicit tool-manifest conditioning can be expanded further.
